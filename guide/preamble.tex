@@ -1,0 +1,53 @@
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_GB
+\documentclass[12pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\usepackage[colorlinks]{hyperref}
+\usepackage[backend=biber,firstinits=true,style=authoryear]{biblatex}
+\usepackage{makeidx}
+\usepackage{graphicx}
+\usepackage{cleveref}
+\usepackage{titling}
+\usepackage{titlesec}
+\usepackage{lipsum}
+\usepackage{hyphenat}
+\usepackage{listings}
+
+\lstset{
+	breaklines=true,
+	keepspaces=true,
+	basicstyle=\ttfamily,
+	columns=flexible,
+	captionpos=b,
+    extendedchars=true,
+    inputencoding=utf8
+}
+
+\addbibresource{razer.bib}
+
+\newcommand{\subtitle}[1]{%
+  \posttitle{%
+    \par\end{center}
+    \begin{center}\large#1\end{center}
+    \vskip0.5em}%
+}
+
+\titleformat{\chapter}[hang]
+{\normalfont\huge\bfseries}{\thechapter}{1em}{} 
+
+\title{SharpBlade, a guide}
+\subtitle{Making apps for the SBUI with SharpBlade 5.x}
+\author{Adam Hellberg \and Brandon JC Scott}
+
+\renewcommand{\c}{\lstinline}
+\newcommand{\cs}{\lstinline[language=[Sharp]C]}
+
+\lstnewenvironment{code}{}{}
+\lstnewenvironment{csharp}{\lstset{language=[Sharp]C}}{}
+\lstnewenvironment{csexample}[2]%
+{\lstset{label=csexample:#1, caption=#2, language=[Sharp]C}}%
+{}
+
+\makeindex
