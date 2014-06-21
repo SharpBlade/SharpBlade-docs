@@ -1,12 +1,18 @@
 % !TeX encoding = UTF-8
 % !TeX spellcheck = en_GB
-\documentclass[12pt,a4paper]{book}
+\documentclass[10pt,a4paper,oneside,openany]{refrep}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{textcomp}
 \usepackage[UKenglish]{babel}
+\usepackage[hyphens]{url}
 \usepackage[colorlinks]{hyperref}
 \usepackage[backend=biber,firstinits=true,style=authoryear]{biblatex}
 \usepackage{makeidx}
+%\usepackage{showidx}
+\usepackage[xindy]{glossaries}
+\usepackage[usenames,dvipsnames]{color}
 \usepackage{graphicx}
 \usepackage{cleveref}
 \usepackage{titling}
@@ -14,6 +20,7 @@
 \usepackage{lipsum}
 \usepackage{hyphenat}
 \usepackage{listings}
+%\usepackage{fancyhdr}
 
 \lstset{
 	breaklines=true,
@@ -25,7 +32,27 @@
     inputencoding=utf8
 }
 
+%\pagestyle{fancy}
+
+%\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+%\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+%\fancyhf{}
+%\fancyhead[LE,RO]{\bfseries\thepage}
+%\fancyhead[LO]{\bfseries\rightmark}
+%\fancyhead[RE]{\bfseries\leftmark}
+%\renewcommand{\headrulewidth}{0.5pt}
+%\renewcommand{\footrulewidth}{0pt}
+%\addtolength{\headheight}{0.5pt} % space for the rule
+%\fancypagestyle{plain}{%
+%    \fancyhead{} % get rid of headers on plain pages
+%    \renewcommand{\headrulewidth}{0pt} % and the line
+%}
+
 \addbibresource{razer.bib}
+
+\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}}
+
+\input{glossary.tex}
 
 \newcommand{\subtitle}[1]{%
   \posttitle{%
@@ -34,20 +61,43 @@
     \vskip0.5em}%
 }
 
-\titleformat{\chapter}[hang]
-{\normalfont\huge\bfseries}{\thechapter}{1em}{} 
+%\titleformat{\chapter}[hang]
+%{\normalfont\huge\bfseries}{\thechapter}{1em}{} 
 
 \title{SharpBlade, a guide}
 \subtitle{Making apps for the SBUI with SharpBlade 5.x}
 \author{Adam Hellberg \and Brandon JC Scott}
 
+\definecolor{darkgreen}{RGB}{0,100,0}
+
 \renewcommand{\c}{\lstinline}
-\newcommand{\cs}{\lstinline[language=[Sharp]C]}
+\newcommand{\cs}{\lstinline[language={[Sharp]C}]}
+\newcommand{\rzapi}[1]{\textbf{\lstinline[language={C++}]|#1|}}
+
+\newcommand{\sbapi}[2][R_Project_Documentation]%
+{\href%
+    {http://sharpblade.net/docs/?topic=html/#1.htm}%
+    {\textbf{\textcolor{darkgreen}{\lstinline[language={[Sharp]C}]|#2|}}}}
 
 \lstnewenvironment{code}{}{}
 \lstnewenvironment{csharp}{\lstset{language=[Sharp]C}}{}
+\lstnewenvironment{cexample}[2]%
+{\lstset{label=example:#1, caption=#2}}
+{}
 \lstnewenvironment{csexample}[2]%
 {\lstset{label=csexample:#1, caption=#2, language=[Sharp]C}}%
 {}
 
+\newcommand{\rarr}{\ensuremath{\rightarrow}\ }
+
+\newcommand{\screenshot}[3]{%
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=\textwidth]{screens/#1}
+    \caption{#2}
+    \label{screenshot:#3}
+\end{figure}
+}
+
 \makeindex
+\makeglossaries

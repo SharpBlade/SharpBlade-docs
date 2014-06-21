@@ -1,0 +1,78 @@
+\chapter{Creating your first app}
+The best way to introduce SharpBlade is to simply walk through the process of creating a new application from scratch.
+
+\section{Starting VS and creating a new \acrshort{wpf} project}
+(First make sure NuGet is installed as described in chapter~\ref{setup}.)
+
+Start your installation of Visual Studio (\gls{winkey} + S\footnote{Windows search panel or window} \rarr ``Visual Studio'' \rarr Enter) and create a new \gls{wpf} project.
+
+\begin{enumerate}
+    \item File \rarr New \rarr Project (or Ctrl+Shift+N) (see figure~\ref{screenshot:file-new-project})
+    \item Choose \gls{wpf} as the project type (see figure~\ref{screenshot:new-wpf-project})
+    \item Choose a name and location for your project (can be anything)
+    \item Press OK
+\end{enumerate}
+
+\screenshot{file_new_project.png}{File \rarr New \rarr Project}{file-new-project}
+\screenshot{new_wpf_project.png}{Creating a new \acrshort{wpf} project}{new-wpf-project}
+
+\section{Installing SharpBlade from NuGet}
+(Skip if you're obtaining SharpBlade in a different way or you already did this step in chapter~\ref{setup}.)
+
+Before we go further, you should install the SharpBlade library. In this guide we'll do it through NuGet, because it ensures you are getting the latest stable version of the library. Simply run the following command in the package manager console (accessible through the tools menu, see figures~\ref{screenshot:tools-package-manager-console} and~\ref{screenshot:install-sharpblade-command} for examples).
+
+\begin{cexample}{install-sharpblade-command}{Running the Install-Package command}
+    Install-Package SharpBlade
+\end{cexample}
+
+\screenshot{tools_package_manager_console.png}{Accessing the package manager console}{tools-package-manager-console}
+\screenshot{install_package_sharpblade.png}{Running the Install-Package command}{install-sharpblade-command}
+
+\section{Setting up the window}
+You're now in your project with a newly created \gls{wpf} window, make sure its dimensions are set to 800 pixels in width and 480 in height (the dimensions of the touchpad). Place something in the window in order to see if it renders properly to the touchpad (a label with some text or similar). Also make sure that the \c|WindowStyle| property of the window is set to \c|None|, to avoid the title bar and other such things to render to the touchpad (see figure~\ref{screenshot:wpf-window-settings}).
+
+\screenshot{wpf_window_settings.png}{Customizing the \acrshort{wpf} window}{wpf-window-settings}
+
+\section{Initializing the manager and rendering}
+Now go into the code for the window (press F7 or right click the file for the WPF window and select ``View code''). We'll want to add a private field to save a reference to \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager} (for simplicity), so go ahead and do that (making sure to add a \sbapi[N_SharpBlade_Razer]{using SharpBlade.Razer;} with the rest of the usings).
+
+We'll have to assign an actual instance of \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager} to this field, which we'll do in the constructor of the window, right after the call to \c|InitializeComponent()|.
+
+A code example is provided in listing~\ref{csexample:init-razermanager} (omitting some common \c|using| declarations that are inserted for you by the designer).
+
+\begin{csexample}{init-razermanager}{Initializing RazerManager}
+using SharpBlade.Razer;
+
+namespace SharpBladeTutorial
+{
+    public partial class MainWindow : Window
+    {
+        private readonly RazerManager _razer;
+        
+        public MainWindow()
+        {
+            InitializeComponent();
+            
+            _razer = RazerManager.Instance;
+        }
+    }
+}
+\end{csexample}
+
+This will initialize all Razer components and running the app at this stage would cause the \gls{sbui} to give control to our app and display nothing (since we haven't rendered anything yet!). As the next step, let's draw the window to the touchpad with the \sbapi[Overload_SharpBlade_Razer_Touchpad_SetWindow]{Touchpad.SetWindow} method (\sbapi[T_SharpBlade_Razer_Touchpad]{Touchpad} is accessible as a property on \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager}).
+
+\begin{csexample}{set-window}{Drawing a window to the touchpad}
+public MainWindow()
+{
+    InitializeComponent();
+    
+    _razer = RazerManager.Instance;
+    _razer.Touchpad.SetWindow(
+        this,
+        Touchpad.RenderMethod.Polling);
+}
+\end{csexample}
+
+Running the app now, you should see the window rendered to the touchpad at about 24 FPS (frequency can be modified by supplying a third argument to \sbapi[M_SharpBlade_Razer_Touchpad_SetWindow_1]{Touchpad.SetWindow}).
+
+Closing the app at this point (through either the window X button or pressing the \emph{Razer Home key}) should work fine, as the finalize method on \sbapi[M_SharpBlade_Razer_RazerManager_Finalize]{RazerManager} will make sure the app is closed properly. That said, it doesn't hurt to subscribe to the \sbapi[E_SharpBlade_Razer_RazerManager_AppEvent]{RazerManager.AppEvent} event and check for the \sbapi[T_SharpBlade_Native_RazerAPI_AppEventType]{RazerAPI.AppEventType.Close} type event and do some clean-up there followed by exiting with \c|Application.Exit()|.

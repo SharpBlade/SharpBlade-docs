@@ -1,20 +1,20 @@
 \chapter{App flow in SharpBlade}
-If you've read the documentation for Razer's SDK, you will have noticed the application flow that is listed there: \c|RzSBStart() -> RzSBQueryCapabilities() -> Register gestures/keys -> <app stuff> -> RzSBStop()|.
+If you've read the documentation for Razer's \gls{sdk}, you will have noticed the application flow that is listed there: \c|RzSBStart() -> RzSBQueryCapabilities() -> Register gestures/keys -> <app stuff> -> RzSBStop()|.
 
 SharpBlade has a similar flow when creating applications, but in a way that should be familiar to C\# developers.
 
-\section[The RazerManager class]{The \c|RazerManager| class}
-\c|RazerManager| is the core of SharpBlade, it's what manages and provides all the other components like the \c|Touchpad| class and various \c|DynamicKey| instances. The class itself is a singleton, so you obtain a reference to it via the \c|Instance| property.
+\section[The RazerManager class]{The \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager} class}
+\sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager} is the core of SharpBlade, it's what manages and provides all the other components like the \sbapi[T_SharpBlade_Razer_Touchpad]{Touchpad} class and various \sbapi[T_SharpBlade_Razzer_DynamicKey]{DynamicKey} instances. The class itself is a singleton, so you obtain a reference to it via the \sbapi[P_SharpBlade_Razer_RazerManager_Instance]{RazerManager.Instance} property.
 
-Like other singletons, this is done to enforce a single instance of \c|RazerManager| is used for an application. For your convenience, you may want to save a local reference to \c|RazerManager| like so:
+Like other singletons, this is done to enforce a single instance of \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager} is used for an application. For your convenience, you may want to save a local reference to \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager} like so:
 
 \begin{csexample}{getting-instance}{Getting an instance of RazerManager}
     var manager = SharpBlade.RazerManager.Instance;
 \end{csexample}
 
-This (assuming it's the first access to \c|Instance|) will initialise the internal field with a new instance of \c|RazerManager|, which calls the necessary native functions to initialise the SDK. You can then use this manager instance to access the various parts of the SDK and perform method calls.
+This (assuming it's the first access to \sbapi[P_SharpBlade_Razer_RazerManager_Instance]{RazerManager.Instance}) will initialise the internal field with a new instance of \sbapi[T_SharpBlade_Razer_RazerManager]{RazerManager}, which calls the necessary native functions to initialise the \gls{sdk}. You can then use this manager instance to access the various parts of the \gls{sdk} and perform method calls.
 
 \section{Life cycle}
-As mentioned, \c|RzSBStart| is called internally when the \c|Instance| property is first accessed, but when is \c|RzSBStop| called then? On dispose!
+As mentioned, \rzapi{RzSBStart} is called internally when the \sbapi[P_SharpBlade_Razer_RazzerManager_Instance]{RazerManager.Instance} property is first accessed, but when is \rzapi{RzSBStop} called then? On dispose!
 
-\c|RazerManager| implements the \c|IDisposable| interface, and calls \c|RzSBStop| when it disposes, either explicitly by code or when it's collected by the GC.
+\sbapi{RazerManager} implements the \c|IDisposable| interface, and calls \rzapi{RzSBStop} when it disposes, either explicitly by code or when it's collected by the \gls{gc}.
