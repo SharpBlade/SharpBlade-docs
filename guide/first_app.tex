@@ -76,3 +76,52 @@ public MainWindow()
 Running the app now, you should see the window rendered to the touchpad at about 24 FPS (frequency can be modified by supplying a third argument to \sbapi[M_SharpBlade_Razer_Touchpad_SetWindow_1]{Touchpad.SetWindow}).
 
 Closing the app at this point (through either the window X button or pressing the \emph{Razer Home key}) should work fine, as the finalize method on \sbapi[M_SharpBlade_Razer_RazerManager_Finalize]{RazerManager} will make sure the app is closed properly. That said, it doesn't hurt to subscribe to the \sbapi[E_SharpBlade_Razer_RazerManager_AppEvent]{RazerManager.AppEvent} event and check for the \sbapi[T_SharpBlade_Native_RazerAPI_AppEventType]{RazerAPI.AppEventType.Close} type event and do some clean-up there followed by exiting with \c|Application.Exit()|.
+
+\section{Enabling dynamic keys}
+Now that we have a window rendering on the touchpad we'll look into enabling some dynamic keys for additional app interaction. This isn't much more complicated than rendering windows, but we'll need a few more components, like a callback function to be called when a key is pressed.
+
+Let's start with writing the callback method that will need to match the signature of a regular \c|EventHandler| delegate (the \c|sender| parameter is set to the dynamic key that was pressed).
+
+\begin{csexample}{create-dk-callback}{Creating the dynamic key callback handler}
+private void MyDkHandler(object sender, EventArgs args)
+{
+    var dk = sender as DynamicKey;
+    // A cast to DynamicKey should never fail in
+    // SharpBlade 5.x, but it's possible future
+    // versions could alter the behavior and it
+    // could be worth using this method if you
+    // rely on casting sender to DynamicKey
+    if (dk == null)
+        return; // Not a valid sender param
+    Console.WriteLine("{0} was pressed!", dk.Type);
+}
+\end{csexample}
+
+Now we will have to tell SharpBlade (which then tells the Razer \gls{sdk}) to enable the dynamic key of our choosing. This is easily done with one of the \sbapi[Overload_SharpBlade_Razer_RazerManager_EnableDynamicKey]{RazerManager.EnableDynamicKey} overloads. The two are nearly identical with the exception that one of them also takes the callback method as a parameter.
+
+For this example, we'll use the overload taking an \c|EventHandler| since we have already written our handler method. This example is meant to complement the code in listing~\ref{csexample:set-window}, so you should add the new code after the current code in the window's constructor, as we will be using the previously defined field \c|_razer| to access the instance of RazerManager.
+
+Other than the callback, you will also need to tell the method what dynamic key (1-10) you want to enable, and the image file to display on them. The last parameter tells it whether to overwrite the data associated with the specified dynamic key if it has previously been initialized. The last two parameters are optional and we'll discuss the method more thoroughly in the following paragraphs.
+
+\begin{csexample}{enabling-dk}{Enabling a dynamic key}
+public MainWindow()
+{
+    DynamicKey dk = _razer.EnableDynamicKey(
+        RazerAPI.DynamicKeyType.DK1,
+        MyDkHandler,
+        "image.png",
+        "pressedImage.png",
+        true);
+}
+\end{csexample}
+
+You'll notice we supplied \c|true| for the override parameter, this is to make sure that the dynamic key is enabled with the parameters we want. Had we passed \c|false| instead, and \c|DK1| had already been enabled by a previous call to \sbapi[M_SharpBlade_Razer_RazerManager_EnableDynamicKey]{RazerManager.EnableDynamicKey}, this call would simply return the already configured dynamic key.
+
+In the example we store the return value in a local variable, we can then use this o make further modifications to the dynamic key, or store it for future usage. If you choose to simply call the method without storing the return, which is convenient when you just want to enable a key and be done with it, you can obtain a reference to it later by calling the \sbapi[M_SharpBlade_Razer_RazerManager_GetDynamicKey]{RazerManager.GetDynamicKey} method.
+
+We passed \c|"image.png"| and \c|"pressedImage.png"| as the third and fourth parameters, these are (as you probably already guessed) the images that will be displayed on the dynamic key depending on its state. \c|"image.png"| will be the image displayed when the key is in the up state or ``idle''. The framework will update the displayed image to \c|"pressedImage.png"| when the key is pressed down by the user (and then back to \c|"image.png"| as soon as the user releases the key again).
+
+\section{Compiling and testing your app}
+Congratulations! You should now have a working app, even if it doesn't do much yet. You can compile and run your application (by pressing F5 in Visual Studio) and after some brief compilation action, you should see your app running on the touchpad on your \gls{sbui} device!
+
+If you encounter any errors during compilation, or get runtime exceptions, don't fear to contact us for help (or the rest of the \gls{sbui} developer community) through Razer's developer forums or our contact details listed in chapter~\ref{chap:contact} on page~\pageref{chap:contact}. Please do not make an issue on our GitHub repository for general help with the library, as that should be reserved for bugs within the library or feature requests.
