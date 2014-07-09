@@ -97,7 +97,7 @@ private void MyDkHandler(object sender, EventArgs args)
 }
 \end{csexample}
 
-Now we will have to tell SharpBlade (which then tells the Razer \gls{sdk}) to enable the dynamic key of our choosing. This is easily done with one of the \sbapi[Overload_SharpBlade_Razer_RazerManager_EnableDynamicKey]{RazerManager.EnableDynamicKey} overloads. The two are nearly identical with the exception that one of them also takes the callback method as a parameter.
+Now we will have to tell SharpBlade (which then tells the Razer \gls{sdk}) to enable the dynamic key of our choosing. This is easily done with one of the \sbapi[Overload_SharpBlade_Razer_RazerManager_EnableDynamicKey]{RazerManager.EnableDynamicKey} overloads. They are nearly identical with the exception that some of them take a callback method and/or a \c|pressedImage| string argument as parameters.
 
 For this example, we'll use the overload taking an \c|EventHandler| since we have already written our handler method. This example is meant to complement the code in listing~\ref{csexample:set-window}, so you should add the new code after the current code in the window's constructor, as we will be using the previously defined field \c|_razer| to access the instance of RazerManager.
 
