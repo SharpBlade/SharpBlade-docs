@@ -2,12 +2,13 @@
 # Ignore LaTeX intermediate and build files
 # It's easier to use a whitelist for LaTeX, due to the
 # number of unwanted file types.
-/guide/*
+/guide/**/*.*
 # Do not ignore source files
-!/guide/*.tex
-!/guide/*.bib
+!/guide/**/*.tex
+!/guide/**/*.bib
 # Do not ignore images
-!/guide/*.jpg
-!/guide/*.png
-!/guide/*.svg
-!/guide/*.gif
+!/guide/**/*.jpg
+!/guide/**/*.png
+!/guide/**/*.svg
+!/guide/**/*.gif
+
